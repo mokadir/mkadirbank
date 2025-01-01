@@ -20,7 +20,7 @@ pipeline {
 	
 		stage ('Git Checkout'){
 			steps {
-				git branch: 'dev', credentialsId: 'gihub-cred', url: 'https://github.com/mokadir/mkadirbank.git' 
+				git branch: 'dev', credentialsId: 'git-cred', url: 'https://github.com/mokadir/mkadirbank.git'
 			}
 		}
 		
@@ -40,22 +40,23 @@ pipeline {
 			steps {
 				echo "Running Code Coverage ..."
 				sh "mvn jacoco:report"
-			} */
+			} 
 		}
 				
-/* 		stage ('Unit Test'){
+    	stage ('Unit Test'){
 			steps {
 				sh "mvn test -DskipTests=true" 
 			}
-		} */
+		} 
+
 		
-/* 		stage ('File System Scan'){
+ 		stage ('File System Scan'){
 			steps {
 				sh "trivy fs --format table -o trivyscanfs.html ."
 			}
-		} */
+		} 
 		
-/* 		stage('SAST') {
+ 		stage('SAST') {
 			steps { 
 				echo "Running Static application security testing using SonarQube Scanner ..."
 				withSonarQubeEnv('mysonarqube') {
@@ -84,7 +85,8 @@ pipeline {
 					sh "mvn deploy -DskipTests=true"
 				}
 			}
-		} */
+		} 
+*/
 		
 		stage ('Docker Build & Tag'){
 			steps {
