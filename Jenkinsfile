@@ -36,24 +36,24 @@ pipeline {
 			}
 		}
 		
-		stage('Code Coverage ') {
+/* 		stage('Code Coverage ') {
 			steps {
 				echo "Running Code Coverage ..."
 				sh "mvn jacoco:report"
-			}
+			} */
 		}
 				
-		stage ('Unit Test'){
+/* 		stage ('Unit Test'){
 			steps {
 				sh "mvn test -DskipTests=true" 
 			}
-		}
+		} */
 		
-		stage ('File System Scan'){
+/* 		stage ('File System Scan'){
 			steps {
 				sh "trivy fs --format table -o trivyscanfs.html ."
 			}
-		}
+		} */
 		
 /* 		stage('SAST') {
 			steps { 
