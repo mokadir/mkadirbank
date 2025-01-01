@@ -3,10 +3,6 @@ pipeline {
         label "buildAgent"	
     }
 	
-	parameters {
-		string(name: 'DOCKER_TAG', defaultValue: 'latest', description: 'Docker Tag')
-	}
-	
 	tools {
 		maven 'maven3'			
 	}
@@ -14,24 +10,28 @@ pipeline {
 	stages {
 		stage ('Clean Workspace'){
 			steps {
+                echo "****** Workspace Cleanup running....******"
 				cleanWs()
 			}
 		}
 	
 		stage ('Git Checkout'){
 			steps {
+                echo "****** Git Checkout running....******"
 				git branch: 'dev', credentialsId: 'git-cred', url: 'https://github.com/mokadir/mkadirbank.git'
 			}
 		}
 		
 		stage ('Compile'){
 			steps {
+                echo "****** Compile running....******"
 				sh "mvn compile"
 			}
 		}
 		
 		stage ('Build Application'){
 			steps {
+                echo "****** Build Application running....******"
 				sh "mvn clean package -DskipTests=true"
 			}
 		}
@@ -91,8 +91,9 @@ pipeline {
 		stage ('Docker Build & Tag'){
 			steps {
 				script {
-					withDockerRegistry(credentialsId: 'docker-cred') {
-						sh "docker build -t mskr7/mkadir-bankapp:${params.DOCKER_TAG} ."
+                    echo "****** Docker Build and Tag Image running....******"
+					withDockerRegistry(credentialsId: 'docer-cred') {
+						sh "docker build -t mskr7/mkadir-bankapp:latest} ."
 					}
 				}
 			}
@@ -115,34 +116,37 @@ pipeline {
 		registryCredential = 'docdocker-cred' 
 	} */
 		
-		stage ('Docker Image Scan'){
+/* 		stage ('Docker Image Scan'){
 			steps {
-				sh "trivy image --scanners vuln --format table -o trivyscandocr.html mskr7/mkadir-bankapp:${params.DOCKER_TAG}"
+                echo "****** Docker Image Scan by Trivy running....******"
+				sh "trivy image --scanners vuln --format table -o trivyscandocr.html mskr7/mkadir-bankapp:latest}"
 			}
-		}
+		} */
 		
 		stage ('Docker Push'){
 			steps {
 				script {
-					withDockerRegistry(credentialsId: 'docker-cred') {
-						sh "docker push mskr7/mkadir-bankapp:${params.DOCKER_TAG}"
+                    echo "****** Docker Push Image running....******"
+					withDockerRegistry(credentialsId: 'docer-cred') {
+						sh "docker push mskr7/mkadir-bankapp:latest}"
 					}
 				}
 			}
 		}
 		
-		stage('Smoke Test') {
+/* 		stage('Smoke Test') {
 			steps { 
-				echo "Smoke Test the Image"
+				echo "****** Smoke Test Image running....******"
 				sh "docker run -d --name smokerun -p 8080:8080 mskr7/mkadir-bankapp:${params.DOCKER_TAG}"
 				sh "docker rm --force smokerun"
 			}
-		}
+		} */
 		
 		stage('Trigger Deployment'){
 			steps { 
 			   script {
-					 echo "Next: Trigger CD Pipeline ......" 
+                    echo "****** Deployment running.... ******"
+					echo "Next: Trigger CD Pipeline ......" 
 				}		
 			}
 		}
