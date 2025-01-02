@@ -1,5 +1,5 @@
 pipeline {
-	agent{							
+	agent {							
         label "buildAgent"	
     }
 	
@@ -36,8 +36,9 @@ pipeline {
 			}
 		}
 		
-/* 		stage('Code Coverage ') {
+ 		stage('Code Coverage ') {
 			steps {
+				echo "****** Code Coverage running....******"
 				echo "Running Code Coverage ..."
 				sh "mvn jacoco:report"
 			} 
@@ -45,6 +46,7 @@ pipeline {
 				
     	stage ('Unit Test'){
 			steps {
+				echo "****** Unit Test running....******"
 				sh "mvn test -DskipTests=true" 
 			}
 		} 
@@ -52,10 +54,11 @@ pipeline {
 		
  		stage ('File System Scan'){
 			steps {
+				echo "****** File System scan running....******"
 				sh "trivy fs --format table -o trivyscanfs.html ."
 			}
 		} 
-		
+/*		
  		stage('SAST') {
 			steps { 
 				echo "Running Static application security testing using SonarQube Scanner ..."
@@ -63,8 +66,8 @@ pipeline {
 					sh 'mvn sonar:sonar -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html'
 				}
 			}
-    }
-		
+    	}
+ 		
 		stage('QualityGates') { #need sonarqube webhook
 			steps { 
 				echo "Running Quality Gates to verify the code quality"
@@ -73,11 +76,11 @@ pipeline {
 					def qg = waitForQualityGate()		# jenkins will get serv & cred from previous stage
 					if (qg.status != 'OK') {
 					  error "Pipeline aborted due to quality gate failure: ${qg.status}"
-            }
-          }
-        }
-      }
-    }
+					}
+				  }
+				}
+			}
+		}
 		
 		stage ('Building and Publish Nexus'){
 			steps {
@@ -86,20 +89,20 @@ pipeline {
 				}
 			}
 		} 
-*/
+ */
 		
 		stage ('Docker Build & Tag'){
 			steps {
 				script {
                     echo "****** Docker Build and Tag Image running....******"
 					withDockerRegistry(credentialsId: 'docer-cred') {
-						sh "docker build -t mskr7/mkadir-bankapp:latest} ."
+						sh "docker build -t mskr7/mkadir-bankapp:latest ."
 					}
 				}
 			}
 		}
 
-        /* stage('Build Docker Image') { 			# alternate. better using functions insted of commands
+/* 		stage('Build Docker Image') { 			# alternate. better using functions insted of commands
 			steps { 
 				echo "Build Docker Image"
 				script {
@@ -109,38 +112,40 @@ pipeline {
 						}	
 				}
 			}
-		} */
+		
 
-/*     environment {  #environment variables for previous docker alternate stage
+     environment {  #environment variables for previous docker alternate stage
 		registry = "mskr7/mkadir-bankapp" 
 		registryCredential = 'docdocker-cred' 
-	} */
+	} 
+*/
 		
-/* 		stage ('Docker Image Scan'){
+		stage ('Docker Image Scan'){
 			steps {
                 echo "****** Docker Image Scan by Trivy running....******"
-				sh "trivy image --scanners vuln --format table -o trivyscandocr.html mskr7/mkadir-bankapp:latest}"
+				sh "trivy image --scanners vuln --format table -o trivyscandocr.html mskr7/mkadir-bankapp:latest"
 			}
-		} */
+		} 
 		
 		stage ('Docker Push'){
 			steps {
 				script {
                     echo "****** Docker Push Image running....******"
 					withDockerRegistry(credentialsId: 'docer-cred') {
-						sh "docker push mskr7/mkadir-bankapp:latest}"
+						sh "docker push mskr7/mkadir-bankapp:latest"
 					}
 				}
 			}
 		}
 		
-/* 		stage('Smoke Test') {
+ 		stage('Smoke Test') {
 			steps { 
 				echo "****** Smoke Test Image running....******"
-				sh "docker run -d --name smokerun -p 8080:8080 mskr7/mkadir-bankapp:${params.DOCKER_TAG}"
+				sh "docker run -d --name smokerun -p 8080:8080 mskr7/mkadir-bankapp:latest"
+				sh "sleep 90"
 				sh "docker rm --force smokerun"
 			}
-		} */
+		} 
 		
 		stage('Trigger Deployment'){
 			steps { 
