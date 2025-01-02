@@ -125,7 +125,7 @@ pipeline {
                 echo "****** Docker Image Scan by Trivy running....******"
 				sh "trivy image --scanners vuln --format table -o trivyscandocr.html mskr7/mkadir-bankapp:latest"
 			}
-		} /* need lot of ram */
+		}  need lot of ram
 */		
 		stage ('Docker Push'){
 			steps {
