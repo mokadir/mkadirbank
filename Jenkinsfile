@@ -118,15 +118,15 @@ pipeline {
 		registry = "mskr7/mkadir-bankapp" 
 		registryCredential = 'docdocker-cred' 
 	} 
-*/
+
 		
-		stage ('Docker Image Scan'){
+		stage ('Docker Image Scan'){ 			
 			steps {
                 echo "****** Docker Image Scan by Trivy running....******"
 				sh "trivy image --scanners vuln --format table -o trivyscandocr.html mskr7/mkadir-bankapp:latest"
 			}
-		} 
-		
+		} /* need lot of ram */
+*/		
 		stage ('Docker Push'){
 			steps {
 				script {
