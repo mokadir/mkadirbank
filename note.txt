@@ -1,2 +1,6 @@
+goal:
+eclipse:eclipse
 spring-boot:run
+package [will generate war file]
+
 https://start.spring.io/
